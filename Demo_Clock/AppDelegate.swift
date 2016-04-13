@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        if application.respondsToSelector("isRegisteredForRemoteNotifications") {
+        if application.respondsToSelector(#selector(UIApplication.isRegisteredForRemoteNotifications)) {
             application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [UIUserNotificationType.Sound, UIUserNotificationType.Alert, UIUserNotificationType.Badge], categories: nil))
             application.registerForRemoteNotifications()
         } else {

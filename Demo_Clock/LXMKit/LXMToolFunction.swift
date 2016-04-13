@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-func DLog(message: String, function: String = __FUNCTION__, line: Int = __LINE__, file: String = __FILE__) -> Void {
+func DLog(message: String, function: String = #function, line: Int = #line, file: String = #file) -> Void {
 
     #if DEBUG
         let tempArray = file.componentsSeparatedByString("/")
@@ -23,7 +23,7 @@ func DLog(message: String, function: String = __FUNCTION__, line: Int = __LINE__
     
 }
 
-func delay(delay:Double, closure:()->()) {
+func delay(delay: Double, closure: ()->()) {
     dispatch_after(
         dispatch_time(
             DISPATCH_TIME_NOW,
@@ -32,6 +32,39 @@ func delay(delay:Double, closure:()->()) {
         dispatch_get_main_queue(), closure)
 }
 
+
+/**
+ 截取当前屏幕的某个区域为一个image
+ */
+func imageFromScreenshotWithRect(rect: CGRect) -> UIImage? {
+    if let window = UIApplication.sharedApplication().delegate?.window {
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
+        let targetRect = CGRectMake(-rect.origin.x, -rect.origin.y, kLXMScreenWidth, kLXMScreenHeight)
+        window!.drawViewHierarchyInRect(targetRect, afterScreenUpdates: false)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    } else {
+        return nil
+    }
+}
+
+/**
+ 把秒转换为时分秒的格式
+ */
+func timeDurationFromSeconds(seconds: NSTimeInterval) -> String {
+    let datecomponents = NSDateComponents()
+    if let date = NSCalendar.currentCalendar().dateFromComponents(datecomponents) {
+        let timeInterval = date.timeIntervalSince1970 + seconds
+        let newDate = NSDate(timeIntervalSince1970: timeInterval)
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+        return dateFormatter.stringFromDate(newDate)
+    } else {
+        return ""
+    }
+    
+}
 
 extension UIColor {
     

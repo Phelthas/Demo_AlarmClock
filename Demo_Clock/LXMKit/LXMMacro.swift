@@ -13,6 +13,7 @@ import UIKit
 let kLXMScreenBounds = UIScreen.mainScreen().bounds
 let kLXMUserDefaults = NSUserDefaults.standardUserDefaults()
 let kLXMNotificationCenter = NSNotificationCenter.defaultCenter()
+let kLXMFileManager = NSFileManager.defaultManager()
 let kLXMScreenWidth: CGFloat = CGRectGetWidth(kLXMScreenBounds)
 let kLXMScreenHeight: CGFloat = CGRectGetHeight(kLXMScreenBounds)
 

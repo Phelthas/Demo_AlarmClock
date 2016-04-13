@@ -18,12 +18,12 @@ class LXMBaseViewController: UIViewController {
 
         #if DEBUG
             
-            let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: "handleLeftSwipeGesture:")
+            let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(LXMBaseViewController.handleLeftSwipeGesture))
             leftSwipeGesture.direction = .Left
             leftSwipeGesture.numberOfTouchesRequired = kDefaultNumberOfTouchesRequired
             self.view.addGestureRecognizer(leftSwipeGesture)
             
-            let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: "handleRightSwipeGesture:")
+            let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(LXMBaseViewController.handleRightSwipeGesture))
             rightSwipeGesture.direction = .Right
             rightSwipeGesture.numberOfTouchesRequired = kDefaultNumberOfTouchesRequired
             self.view.addGestureRecognizer(rightSwipeGesture)
@@ -62,11 +62,17 @@ extension LXMBaseViewController {
 
 extension UIViewController {
     
-    class func loadFromStoryboard(storyboardName: String) -> Self {
+    /**
+     如果storyboardId跟类名相同，可以直接用这个方法
+     */
+    class func swift_loadFromStoryboard(storyboardName: String) -> Self {
         return instantiateFromStoryboardHelper(storyboardName, storyboardId: nil)
     }
 
-    class func loadFromStoryboard(storyboardName: String, storyboardId: String) -> Self {
+    /**
+     类名跟storyboardId不一样时，需要传入storyboardName和storyboardId
+     */
+    class func swift_loadFromStoryboard(storyboardName: String, storyboardId: String) -> Self {
         return instantiateFromStoryboardHelper(storyboardName, storyboardId: storyboardId)
     }
     

@@ -17,14 +17,16 @@ class LXMBaseView: UIView {
 
 extension UIView {
     
-    class func nib() -> UINib {
+    //加swift前缀是因为和OC混编的时候，有可能因为方法名一样导致调用了OC的函数而不是swift的
+    
+    class func swift_nib() -> UINib {
         let tempString = NSStringFromClass(self.classForCoder())
         let tempArray = tempString.componentsSeparatedByString(".")
         let name = tempArray.last!
         return UINib(nibName: name, bundle: nil)
     }
     
-    class func loadFromNib() -> Self {
+    class func swift_loadFromNib() -> Self {
         return loadFromNibHelper()
     }
     

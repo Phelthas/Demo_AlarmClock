@@ -42,7 +42,7 @@ class DCAlarm: NSObject, NSCoding {
             if self.selectedDay == 0 {
                 self.addLocalNotificationForDate(tempDate, selectedDay: 0)
             } else {
-                for (var i = 1; i <= 7; i++) {
+                for (var i = 1; i <= 7; i += 1) {
                     if Bool((1 << (i - 1)) & self.selectedDay) {
                         self.addLocalNotificationForDate(tempDate, selectedDay: i)
                     }

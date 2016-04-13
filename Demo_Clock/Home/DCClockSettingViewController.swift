@@ -46,7 +46,7 @@ class DCClockSettingViewController: LXMBaseViewController {
     
     
     class func loadFromStroyboardWithTargetAlarm(alarm: DCAlarm?) -> DCClockSettingViewController {
-        let viewController = DCClockSettingViewController.loadFromStoryboard("Main")
+        let viewController = DCClockSettingViewController.swift_loadFromStoryboard("Main")
         if alarm == nil {
             viewController.isAddingAlarm = true
             viewController.targetAlarm = DCAlarm()

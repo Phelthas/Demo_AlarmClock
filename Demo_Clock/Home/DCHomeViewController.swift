@@ -46,7 +46,7 @@ extension DCHomeViewController {
     }
     
     func setupNavigationBar() {
-        let addItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "handleAddItemTapped:")
+        let addItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(DCHomeViewController.handleAddItemTapped(_:)))
         self.navigationItem.rightBarButtonItem = addItem
     }
     

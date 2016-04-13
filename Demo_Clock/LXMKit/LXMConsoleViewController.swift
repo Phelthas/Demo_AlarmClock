@@ -29,7 +29,7 @@ class LXMConsoleViewController: UIViewController {
 
         
         
-        let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: "handleRightSwipeGesture:")
+        let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(LXMConsoleViewController.handleRightSwipeGesture))
         rightSwipeGesture.numberOfTouchesRequired = 1
         rightSwipeGesture.direction = .Right
         self.view.addGestureRecognizer(rightSwipeGesture)
