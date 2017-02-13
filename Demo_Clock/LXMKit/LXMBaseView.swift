@@ -21,7 +21,7 @@ extension UIView {
     
     class func swift_nib() -> UINib {
         let tempString = NSStringFromClass(self.classForCoder())
-        let tempArray = tempString.componentsSeparatedByString(".")
+        let tempArray = tempString.components(separatedBy: ".")
         let name = tempArray.last!
         return UINib(nibName: name, bundle: nil)
     }
@@ -30,11 +30,11 @@ extension UIView {
         return loadFromNibHelper()
     }
     
-    private class func loadFromNibHelper<T>() -> T {
+    fileprivate class func loadFromNibHelper<T>() -> T {
         let tempString = NSStringFromClass(self.classForCoder())
-        let tempArray = tempString.componentsSeparatedByString(".")
+        let tempArray = tempString.components(separatedBy: ".")
         let name = tempArray.last!
-        let objectArray = NSBundle.mainBundle().loadNibNamed(name, owner: nil, options: nil)
-        return objectArray.last as! T
+        let objectArray = Bundle.main.loadNibNamed(name, owner: nil, options: nil)
+        return objectArray!.last as! T
     }
 }

@@ -9,25 +9,24 @@
 import UIKit
 
 class DCAlarmManager {
-    var alarmArray: NSMutableArray
-    
+    var alarmArray: [DCAlarm]
     static let sharedInstance = DCAlarmManager()
     
+    private let kDCAlarmArraySavedKey = "kDCAlarmArraySavedKey"
     
-    private init() {
-        if let alarmArrayData = kLXMUserDefaults.objectForKey("alarmArray") as? NSData {
-            let tempArray = NSKeyedUnarchiver.unarchiveObjectWithData(alarmArrayData) as! NSArray
-            self.alarmArray = NSMutableArray(array: tempArray)
+    fileprivate init() {
+        if let alarmArrayData = kLXMUserDefaults.object(forKey: kDCAlarmArraySavedKey) as? Data,
+            let tempArray = NSKeyedUnarchiver.unarchiveObject(with: alarmArrayData) as? [DCAlarm] {
+            alarmArray = tempArray
         } else {
-            self.alarmArray = NSMutableArray()
+            alarmArray = [DCAlarm]()
         }
-        
     }
     
     
     func save() {
-        let alarmArrayData = NSKeyedArchiver.archivedDataWithRootObject(self.alarmArray)
-        kLXMUserDefaults.setObject(alarmArrayData, forKey: "alarmArray")
+        let alarmArrayData = NSKeyedArchiver.archivedData(withRootObject: self.alarmArray)
+        kLXMUserDefaults.set(alarmArrayData, forKey: kDCAlarmArraySavedKey)
         kLXMUserDefaults.synchronize()
     }
     

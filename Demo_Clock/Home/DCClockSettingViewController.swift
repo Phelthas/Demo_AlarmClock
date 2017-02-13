@@ -32,11 +32,11 @@ class DCClockSettingViewController: LXMBaseViewController {
     
     @IBOutlet weak var sundayButton: UIButton!
     
-    private var isAddingAlarm: Bool = false
+    fileprivate var isAddingAlarm: Bool = false
     
-    private var targetAlarm: DCAlarm!
+    fileprivate var targetAlarm: DCAlarm!
     
-    private var buttonArray: [UIButton] {
+    fileprivate var buttonArray: [UIButton] {
         return [mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton, sundayButton]
     }
     
@@ -45,7 +45,7 @@ class DCClockSettingViewController: LXMBaseViewController {
     
     
     
-    class func loadFromStroyboardWithTargetAlarm(alarm: DCAlarm?) -> DCClockSettingViewController {
+    class func loadFromStroyboardWithTargetAlarm(_ alarm: DCAlarm?) -> DCClockSettingViewController {
         let viewController = DCClockSettingViewController.swift_loadFromStoryboard("Main")
         if alarm == nil {
             viewController.isAddingAlarm = true
@@ -91,14 +91,14 @@ extension DCClockSettingViewController {
     func setupDefault() {
         if let alarm = self.targetAlarm {
             if let date = alarm.alarmDate {
-                self.datePicker.date = date
+                self.datePicker.date = date as Date
             } else {
-                self.datePicker.date = NSDate()
+                self.datePicker.date = Date()
             }
             self.selectedButtonTag = alarm.selectedDay
             for button in self.buttonArray {
                 let selected = 1 << (button.tag - 1)
-                button.selected = Bool(alarm.selectedDay & selected)
+                button.isSelected = (alarm.selectedDay & selected) != 0
             }
             
         }
@@ -110,34 +110,40 @@ extension DCClockSettingViewController {
 extension DCClockSettingViewController {
     
     
-    @IBAction func handleCancelButtonTapped(sender: UIButton) {
-        self.dismissViewControllerAnimated(true) { () -> Void in
+    @IBAction func handleCancelButtonTapped(_ sender: UIButton) {
+        self.dismiss(animated: true) { () -> Void in
             
         }
     }
     
-    @IBAction func handleConfirmButtonTapped(sender: UIButton) {
-        let alarm = self.targetAlarm
-        alarm.alarmDate = self.datePicker.date
-        alarm.selectedDay = self.selectedButtonTag
-        alarm.descriptionText = String(format: "%02x", self.selectedButtonTag)
-        alarm.alarmOn = false
-        alarm.identifier = alarm.alarmDate?.description
-        if self.isAddingAlarm {
-            DCAlarmManager.sharedInstance.alarmArray.addObject(alarm)
+    @IBAction func handleConfirmButtonTapped(_ sender: UIButton) {
+        if let alarm = self.targetAlarm {
+            alarm.alarmDate = self.datePicker.date
+            alarm.selectedDay = self.selectedButtonTag
+            alarm.descriptionText = String(format: "%02x", self.selectedButtonTag)
+            alarm.alarmOn = false
+            alarm.identifier = alarm.alarmDate?.description
+            if self.isAddingAlarm {
+                DCAlarmManager.sharedInstance.alarmArray.append(alarm)
+            }
+            
+            DCAlarmManager.sharedInstance.save()
+            
+            self.handleCancelButtonTapped(UIButton())
+        } else {
+            DLog("there is something wrong, 理论上alarm不会为空的")
         }
         
-        DCAlarmManager.sharedInstance.save()
         
-        self.handleCancelButtonTapped(UIButton())
     }
     
     
-    @IBAction func handleDayButtonTapped(sender: UIButton) {
-        sender.selected = !sender.selected
+    @IBAction func handleDayButtonTapped(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
         var resultTag = 0x0
         for button in self.buttonArray {
-            let tag = Int(button.selected) << (button.tag - 1)
+            let selected: Int = button.isSelected ? 1 : 0
+            let tag = selected << (button.tag - 1)
             resultTag = resultTag | tag
         }
         self.selectedButtonTag = resultTag

@@ -12,7 +12,7 @@ import UIKit
 
 extension UICollectionViewCell {
     
-    func configWithData(data: AnyObject, indexPath: NSIndexPath) {
+    func configWithData(_ data: AnyObject, indexPath: IndexPath) {
         assert(false, "need subclass implementation")
     }
     
@@ -21,7 +21,7 @@ extension UICollectionViewCell {
 
 extension UITableViewCell {
     
-    func configWithData(data: AnyObject, indexPath: NSIndexPath) {
+    func configWithData(_ data: AnyObject, indexPath: IndexPath) {
         assert(false, "need subclass implementation")
     }
 }

@@ -12,7 +12,7 @@ class DCHomeViewController: LXMBaseViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
-    var dataArray: NSMutableArray?
+    var dataArray = [DCAlarm]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,7 @@ class DCHomeViewController: LXMBaseViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         self.tableView.reloadData()
@@ -38,7 +38,7 @@ class DCHomeViewController: LXMBaseViewController {
 }
 
 // MARK: - PrivateMethod
-extension DCHomeViewController {
+fileprivate extension DCHomeViewController {
     
     func setupTableView() {
         self.tableView.tableFooterView = UIView()
@@ -46,7 +46,7 @@ extension DCHomeViewController {
     }
     
     func setupNavigationBar() {
-        let addItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(DCHomeViewController.handleAddItemTapped(_:)))
+        let addItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(DCHomeViewController.handleAddItemTapped(_:)))
         self.navigationItem.rightBarButtonItem = addItem
     }
     
@@ -54,10 +54,10 @@ extension DCHomeViewController {
 
 // MARK: - Action
 extension DCHomeViewController {
-    func handleAddItemTapped(sender: UIBarButtonItem) {
+    func handleAddItemTapped(_ sender: UIBarButtonItem) {
         let clockSettingViewController = DCClockSettingViewController.loadFromStroyboardWithTargetAlarm(nil)
         clockSettingViewController.hidesBottomBarWhenPushed = true
-        self.navigationController?.presentViewController(clockSettingViewController, animated: true, completion: { () -> Void in
+        self.navigationController?.present(clockSettingViewController, animated: true, completion: { () -> Void in
             
         })
     }
@@ -66,41 +66,36 @@ extension DCHomeViewController {
 
 extension DCHomeViewController: UITableViewDataSource {
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return DCAlarmManager.sharedInstance.alarmArray.count
-        if ((self.dataArray?.count) != nil) {
-            return (self.dataArray?.count)!
-        } else {
-            return 0
-        }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataArray.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(DCAlarmCellIdentifier) as! DCAlarmCell
-        if let alarm = self.dataArray?.objectAtIndex(indexPath.row) as? DCAlarm {
-            cell.configWithAlarm(alarm, indexPath: indexPath)
-        }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: DCAlarmCellIdentifier) as! DCAlarmCell
+        let alarm = self.dataArray[indexPath.row]
+        cell.configWithAlarm(alarm, indexPath: indexPath)
         return cell
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        let item = self.dataArray!.objectAtIndex(indexPath.row)
-        self.dataArray?.removeObject(item)
-        tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Left)
-        tableView.reloadData()
-        DCAlarmManager.sharedInstance.save()
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        let item = self.dataArray[indexPath.row]
+        if let index = self.dataArray.index(of: item) {
+            self.dataArray.remove(at: index)
+            tableView.deleteRows(at: [indexPath], with: .left)
+            tableView.reloadData()
+            DCAlarmManager.sharedInstance.save()
+        }
     }
     
 }
 
 extension DCHomeViewController: UITableViewDelegate {
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let alarm = self.dataArray?.objectAtIndex(indexPath.row) as? DCAlarm {
-            let clockSettingViewController = DCClockSettingViewController.loadFromStroyboardWithTargetAlarm(alarm)
-            clockSettingViewController.hidesBottomBarWhenPushed = true
-            self.navigationController?.presentViewController(clockSettingViewController, animated: true, completion: { () -> Void in
-                
-            })
-        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alarm = self.dataArray[indexPath.row]
+        let clockSettingViewController = DCClockSettingViewController.loadFromStroyboardWithTargetAlarm(alarm)
+        clockSettingViewController.hidesBottomBarWhenPushed = true
+        self.navigationController?.present(clockSettingViewController, animated: true, completion: { () -> Void in
+            
+        })
     }
 }
