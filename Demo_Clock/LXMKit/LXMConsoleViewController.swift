@@ -17,12 +17,12 @@ class LXMConsoleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor.blackColor()
+        self.view.backgroundColor = UIColor.black
         
-        self.textView = UITextView(frame: CGRectMake(0, 20, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - 20 - 49))
-        self.textView.backgroundColor = UIColor.blackColor()
-        self.textView.textColor = UIColor.greenColor()
-        self.textView.editable = false
+        self.textView = UITextView(frame: CGRect(x: 0, y: 20, width: self.view.bounds.width, height: self.view.bounds.height - 20 - 49))
+        self.textView.backgroundColor = UIColor.black
+        self.textView.textColor = UIColor.green
+        self.textView.isEditable = false
         self.textView.text = ConsoleInfoString
         self.view.addSubview(self.textView)
         self.textView.scrollRangeToVisible(NSMakeRange(self.textView.text.characters.count - 1, 1))
@@ -31,7 +31,7 @@ class LXMConsoleViewController: UIViewController {
         
         let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(LXMConsoleViewController.handleRightSwipeGesture))
         rightSwipeGesture.numberOfTouchesRequired = 1
-        rightSwipeGesture.direction = .Right
+        rightSwipeGesture.direction = .right
         self.view.addGestureRecognizer(rightSwipeGesture)
         
         
@@ -48,8 +48,8 @@ class LXMConsoleViewController: UIViewController {
 
     // MARK: - action
     
-    func handleRightSwipeGesture(sender : UISwipeGestureRecognizer) -> Void {
-        self.dismissViewControllerAnimated(true) { () -> Void in
+    func handleRightSwipeGesture(_ sender : UISwipeGestureRecognizer) -> Void {
+        self.dismiss(animated: true) { () -> Void in
             
         }
     }

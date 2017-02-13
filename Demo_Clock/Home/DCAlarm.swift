@@ -9,7 +9,7 @@
 import UIKit
 
 class DCAlarm: NSObject, NSCoding {
-    var alarmDate: NSDate?
+    var alarmDate: Date?
     var descriptionText: String?
     var identifier: String?
     var selectedDay: Int = 0
@@ -21,20 +21,22 @@ class DCAlarm: NSObject, NSCoding {
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        alarmDate = aDecoder.decodeObjectForKey("alarmDate") as? NSDate
-        descriptionText = aDecoder.decodeObjectForKey("descriptionText") as? String
-        identifier = aDecoder.decodeObjectForKey("identifier") as? String
-        selectedDay = (aDecoder.decodeObjectForKey("selectedDay") as! NSNumber).integerValue
-        alarmOn = aDecoder.decodeBoolForKey("alarmOn") as Bool
+        alarmDate = aDecoder.decodeObject(forKey: "alarmDate") as? Date
+        descriptionText = aDecoder.decodeObject(forKey: "descriptionText") as? String
+        identifier = aDecoder.decodeObject(forKey: "identifier") as? String
+        selectedDay = (aDecoder.decodeObject(forKey: "selectedDay") as! NSNumber).intValue
+        alarmOn = aDecoder.decodeBool(forKey: "alarmOn") as Bool
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(alarmDate, forKey: "alarmDate")
-        aCoder.encodeObject(descriptionText, forKey: "descriptionText")
-        aCoder.encodeObject(identifier, forKey: "identifier")
-        aCoder.encodeObject(NSNumber(integer: selectedDay), forKey: "selectedDay")
-        aCoder.encodeBool(alarmOn, forKey: "alarmOn")
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(alarmDate, forKey: "alarmDate")
+        aCoder.encode(descriptionText, forKey: "descriptionText")
+        aCoder.encode(identifier, forKey: "identifier")
+        aCoder.encode(NSNumber.init(value: selectedDay), forKey: "selectedDay")
+        aCoder.encode(alarmOn, forKey: "alarmOn")
     }
+    
     
     
     func turnOnAlarm() {
@@ -42,8 +44,10 @@ class DCAlarm: NSObject, NSCoding {
             if self.selectedDay == 0 {
                 self.addLocalNotificationForDate(tempDate, selectedDay: 0)
             } else {
-                for (var i = 1; i <= 7; i += 1) {
-                    if Bool((1 << (i - 1)) & self.selectedDay) {
+                for i in 1...7 {
+                    let inter = (1 << (i - 1)) & self.selectedDay
+                    let number = NSNumber.init(integerLiteral: inter)
+                    if Bool.init(number) {
                         self.addLocalNotificationForDate(tempDate, selectedDay: i)
                     }
                     
@@ -52,7 +56,7 @@ class DCAlarm: NSObject, NSCoding {
             
             self.alarmOn = true
         }
-        DLog("after set localNotification is \n \(UIApplication.sharedApplication().scheduledLocalNotifications)")
+        DLog("after set localNotification is \n \(UIApplication.shared.scheduledLocalNotifications)")
     }
     
     func turnOffAlarm() {
@@ -60,18 +64,18 @@ class DCAlarm: NSObject, NSCoding {
             return
         }
         self.alarmOn = false
-        if let tempArray = UIApplication.sharedApplication().scheduledLocalNotifications {
+        if let tempArray = UIApplication.shared.scheduledLocalNotifications {
             for tempNotification in tempArray {
                 print("it is \(tempNotification.userInfo!["identifier"])")
                 if let identfier = tempNotification.userInfo!["identifier"] as? String {
                     if identfier == self.identifier! {
-                        UIApplication.sharedApplication().cancelLocalNotification(tempNotification)
+                        UIApplication.shared.cancelLocalNotification(tempNotification)
                     }
                     
                 }
             }
         }
-    DLog("after set localNotification is \n \(UIApplication.sharedApplication().scheduledLocalNotifications)")
+    DLog("after set localNotification is \n \(UIApplication.shared.scheduledLocalNotifications)")
     }
     
     
@@ -80,31 +84,31 @@ class DCAlarm: NSObject, NSCoding {
 // MARK: - PrivateMethod
 extension DCAlarm {
     
-    private func addLocalNotificationForDate(date: NSDate, selectedDay: NSInteger) {
+    fileprivate func addLocalNotificationForDate(_ date: Date, selectedDay: NSInteger) {
         //selectedDay == 0则认为是只响一次的闹钟
-        let calendar = NSCalendar.currentCalendar()
-        let type: NSCalendarUnit = [NSCalendarUnit.Year , NSCalendarUnit.Month , NSCalendarUnit.Day , NSCalendarUnit.Hour , NSCalendarUnit.Minute , NSCalendarUnit.Second , NSCalendarUnit.Weekday]
-        let dateComponents = calendar.components(type, fromDate: date)
+        let calendar = Calendar.current
+        let type: NSCalendar.Unit = [NSCalendar.Unit.year , NSCalendar.Unit.month , NSCalendar.Unit.day , NSCalendar.Unit.hour , NSCalendar.Unit.minute , NSCalendar.Unit.second , NSCalendar.Unit.weekday]
+        var dateComponents = (calendar as NSCalendar).components(type, from: date)
         dateComponents.second = 0
-        let newDate = calendar.dateFromComponents(dateComponents)
-        let diffComponents = NSDateComponents()
+        let newDate = calendar.date(from: dateComponents)
+        var diffComponents = DateComponents()
         var newWeekDay = selectedDay + 1//苹果默认周日是1，依次往后排；而app里定义的是周一是1，依次往后排
         if newWeekDay == 8 {
             newWeekDay = 1
         }
-        diffComponents.day = newWeekDay - dateComponents.weekday//计算出所选的周几与当前时间的间隔
-        let fireDate = calendar.dateByAddingComponents(diffComponents, toDate: newDate!, options: .WrapComponents)
+        diffComponents.day = newWeekDay - dateComponents.weekday!//计算出所选的周几与当前时间的间隔
+        let fireDate = (calendar as NSCalendar).date(byAdding: diffComponents, to: newDate!, options: .wrapComponents)
         let localNotification = UILocalNotification()
         localNotification.fireDate = fireDate
-        let repeateInterval: NSCalendarUnit = [.NSWeekCalendarUnit]//注意这个选项才是每周。。。
-        localNotification.repeatInterval = selectedDay == 0 ? NSCalendarUnit(rawValue: 0) : repeateInterval
-        localNotification.timeZone = NSTimeZone.systemTimeZone()
+        let repeateInterval: NSCalendar.Unit = [.weekOfYear]//注意这个选项才是每周。。。
+        localNotification.repeatInterval = selectedDay == 0 ? NSCalendar.Unit(rawValue: 0) : repeateInterval
+        localNotification.timeZone = TimeZone.current
         localNotification.soundName = UILocalNotificationDefaultSoundName
         localNotification.alertBody = "本地推送内容"
         localNotification.userInfo = [
             "identifier" : self.identifier!, //注意，这里不同日子同一时刻的通知公用一个identifier
             "fireDay" : fireDate!]
-        UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
+        UIApplication.shared.scheduleLocalNotification(localNotification)
     }
     
 }
