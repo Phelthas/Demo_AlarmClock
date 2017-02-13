@@ -100,7 +100,7 @@ extension DCAlarm {
         let fireDate = (calendar as NSCalendar).date(byAdding: diffComponents, to: newDate!, options: .wrapComponents)
         let localNotification = UILocalNotification()
         localNotification.fireDate = fireDate
-        let repeateInterval: NSCalendar.Unit = [.NSWeekCalendarUnit]//注意这个选项才是每周。。。
+        let repeateInterval: NSCalendar.Unit = [.weekOfYear]//注意这个选项才是每周。。。
         localNotification.repeatInterval = selectedDay == 0 ? NSCalendar.Unit(rawValue: 0) : repeateInterval
         localNotification.timeZone = TimeZone.current
         localNotification.soundName = UILocalNotificationDefaultSoundName
