@@ -1,5 +1,5 @@
 # Demo_AlarmClock
-A alarm clock demo written in swift 2.1, similar to the Apple clock App
+A alarm clock demo written in swift 3.0, similar to the Apple clock App
 
 用swift写的一个闹钟demo，效果如图     
 
