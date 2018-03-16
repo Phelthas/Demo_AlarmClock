@@ -21,7 +21,6 @@ class DCHomeViewController: LXMBaseViewController {
         self.setupTableView()
         self.setupNavigationBar()
         
-        self.dataArray = DCAlarmManager.sharedInstance.alarmArray //swift的数组是struct，是值类型，写的时候要特别注意
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,6 +31,7 @@ class DCHomeViewController: LXMBaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        self.dataArray = DCAlarmManager.sharedInstance.alarmArray //swift的数组是struct，是值类型，写的时候要特别注意
         self.tableView.reloadData()
     }
 
